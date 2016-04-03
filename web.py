@@ -128,7 +128,7 @@ if __name__ == '__main__':
 	if port < 0 or port > 60000:
 		Log(ERROR,"Invalid port number",argv[1],s)
 	
-	host="192.168.0.109"
+	host="0.0.0.0"
 	lsocket.bind((host,port))
 	lsocket.listen(64)
 	hit=0
