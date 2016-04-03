@@ -5,20 +5,17 @@ import sys
 import signal
 import socket
 
-extn = {  "gif":"image/gif" ,  
-        "jpg":"image/jpg" , 
-        "jpeg":"image/jpeg",
-        "png":"image/png",  
-        "ico":"image/ico",  
-        "zip":"image/zip",  
-        "gz":"image/gz" ,  
-        "tar":"image/tar",  
-        "htm":"text/html",  
-        "html":"text/html",
-	"txt":"text/text",  
+# The MIME for the type of data supported
+
+extn = {  "gif":"image/gif" , "jpg":"image/jpg" , "jpeg":"image/jpeg", "png":"image/png", "ico":"image/ico", "zip":"image/zip",  
+        "gz":"image/gz" , "tar":"image/tar", "htm":"text/html", "html":"text/html", "txt":"text/text",  
         chr(0):chr(0) };
 
+# directories which cannot be used to host the web server
+
 unsupported =["/","/etc","/bin","/lib","/tmp","/usr","/dev","/sbin"]
+
+# some constants used throughout the program 
 
 BUFSIZE=8192
 ERROR=42
@@ -26,6 +23,7 @@ LOG=44
 FORBIDDEN=403
 NOTFOUND=404
 
+# list of custom interrupts
 def customSIGINT(foo,bar):
 	exit(0)
 
@@ -55,9 +53,7 @@ def server(sock,hit):
 	info=len(browserReq)
 	if info==0:
 		Log(FORBIDDEN,"failed to read browser request","",sock)
-	buffer=browserReq.replace('\r','*')
-	buffer=buffer.replace('\n','*')
-	browserReq=buffer
+	browserReq=browserReq.replace('\r','*').replace('\n','*')
 	Log(LOG,"request",browserReq,hit)
 	if (not browserReq.startswith("GET ")) and (not browserReq.startswith("get ")):
 		Log(FORBIDDEN,"Only simple GET operation supported",browserReq,sock) 
