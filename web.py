@@ -1,34 +1,19 @@
 from ctypes  import get_errno
 from multiprocessing import Process
-import os
-import sys
-import signal
-import socket
-
+import os,sys,signal,socket
 # The MIME for the type of data supported
-
 extn = {  "gif":"image/gif" , "jpg":"image/jpg" , "jpeg":"image/jpeg", "png":"image/png", "ico":"image/ico", "zip":"image/zip",  
         "gz":"image/gz" , "tar":"image/tar", "htm":"text/html", "html":"text/html", "txt":"text/text",  
         chr(0):chr(0) };
-
 # directories which cannot be used to host the web server
-
 unsupported =["/","/etc","/bin","/lib","/tmp","/usr","/dev","/sbin"]
-
 # some constants used throughout the program 
-
-BUFSIZE=8192
-ERROR=42
-LOG=44
-FORBIDDEN=403
-NOTFOUND=404
-
+BUFSIZE, ERROR, LOG, FORBIDDEN, NOTFOUND=8192,42,44,403,404
 # list of custom interrupts
 def customSIGINT(foo,bar):
 	exit(0)
 
-def Log(type,s1,s2,sock):
-	logbuffer=""
+def Log(type,s1,s2,sock,logbuffer=""):
 	if type == ERROR:
 		logbuffer+="ERROR: {0}:{1} Errno={2} exiting pid={3}".format(s1,s2,get_errno(),os.getpid())
 	elif type == FORBIDDEN:
@@ -59,7 +44,7 @@ def server(sock,hit):
 		Log(FORBIDDEN,"Only simple GET operation supported",browserReq,sock) 
 	buffer= browserReq.split()
 	if '..' in buffer[0] or '..' in buffer[1]:
-		Log(FORBIDDEN,"Parent directory (..) path names not supported",browserReq,sock);			
+		Log(FORBIDDEN,"Parent directory (..) path names not supported",browserReq,sock);
 	if buffer[1] is '/':
 		buffer[1]='/index.html'
 	extension="Not Supported"
@@ -68,8 +53,7 @@ def server(sock,hit):
 			extension=x
 			break
 	if extension is "Not Supported":
-		Log(FORBIDDEN,"file extension type not supported",buffer[1],sock)
-	
+		Log(FORBIDDEN,"file extension type not supported",buffer[1],sock)	
 	filed=os.open(buffer[1][1:],os.O_RDONLY)
 	if(filed<=0):
 		print buffer[1][1:]
